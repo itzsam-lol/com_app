@@ -1,8 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { PhoneCall, Play } from "lucide-react";
 import heroImage from "@/assets/hero-ambulance.png";
+import { useNavigate } from "react-router-dom";
 
 export const Hero = () => {
+  const navigate = useNavigate();
   return (
     <section className="relative min-h-screen flex items-center bg-gradient-hero overflow-hidden">
       {/* Background Pattern */}
@@ -54,6 +56,7 @@ export const Hero = () => {
               <Button 
                 size="lg" 
                 className="bg-white text-primary hover:bg-white/90 shadow-soft transition-smooth group px-8 py-4 text-lg font-semibold"
+                onClick={() => navigate("/index")}
               >
                 <PhoneCall className="mr-2 h-5 w-5 group-hover:scale-110 transition-transform" />
                 Try Emergency Demo

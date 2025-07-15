@@ -16,7 +16,6 @@ export function ProtectedRoute({
   const { user, loading } = useAuth();
   const isAuthenticated = !!user;
 
-  // Show loading spinner while checking authentication
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
