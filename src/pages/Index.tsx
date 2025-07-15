@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Navigation } from "@/components/Navigation";
 import { EmergencyButton } from "@/components/EmergencyButton";
 import { MedicalProfile } from "@/components/MedicalProfile";
@@ -20,6 +20,10 @@ const Index = () => {
   const [showAuth, setShowAuth] = useState(false);
   const { user } = useAuth();
   const isAuthenticated = !!user;
+
+  useEffect(() => {
+    if (isAuthenticated) setShowAuth(false);
+  }, [isAuthenticated]);
 
   const handleEmergencyTriggered = (data: { location: string; timestamp: Date; type: string }) => {
     setEmergencyData(data);

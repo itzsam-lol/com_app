@@ -26,6 +26,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 interface NavigationProps {
   currentPage: string;
@@ -35,7 +36,8 @@ interface NavigationProps {
 
 export function Navigation({ currentPage, onPageChange, onShowAuth }: NavigationProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { user, logout, isAuthenticated } = useAuth();
+  const { user, signOutUser } = useAuth();
+  const navigate = useNavigate();
 
   const citizenPages = [
     { id: 'emergency', label: 'Emergency', icon: Phone },
@@ -57,28 +59,22 @@ export function Navigation({ currentPage, onPageChange, onShowAuth }: Navigation
   ];
 
   const getPages = () => {
-    if (!isAuthenticated || !user) return publicPages;
-    return user.role === 'hospital' ? hospitalPages : citizenPages;
+    if (!user) return publicPages;
+    return citizenPages;
   };
 
   const pages = getPages();
 
-  const getRoleColor = (role: string) => {
-    switch (role) {
-      case 'citizen': return 'emergency';
-      case 'hospital': return 'medical';
-      case 'community': return 'community';
-      default: return 'default';
-    }
-  };
+  const getRoleColor = () => 'emergency';
 
   const handleLogout = async () => {
-    await logout();
-    onPageChange('emergency');
+    await signOutUser();
+    navigate('/');
     setIsMobileMenuOpen(false);
   };
 
-  const getInitials = (name: string) => {
+  const getInitials = (name: string | null | undefined) => {
+    if (!name) return "U";
     return name
       .split(" ")
       .map(word => word[0])
@@ -87,12 +83,14 @@ export function Navigation({ currentPage, onPageChange, onShowAuth }: Navigation
       .slice(0, 2);
   };
 
+  const isAuthenticated = !!user;
+
   return (
     <>
       {/* Desktop Navigation */}
       <nav className="hidden md:flex items-center justify-between p-4 bg-background border-b">
         <div className="flex items-center space-x-6">
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 cursor-pointer" onClick={() => navigate('/index')}>
             <Shield className="h-8 w-8 text-emergency" />
             <div>
               <h1 className="text-xl font-bold">EmergencyAid</h1>
@@ -104,14 +102,12 @@ export function Navigation({ currentPage, onPageChange, onShowAuth }: Navigation
             {pages.map((page) => {
               const Icon = page.icon;
               const isActive = currentPage === page.id;
-              
               // Skip account page if not authenticated
-              if (page.id === 'account' && !isAuthenticated) return null;
-              
+              if (page.id === 'account' && !user) return null;
               return (
                 <Button
                   key={page.id}
-                  variant={isActive ? (user?.role ? getRoleColor(user.role) as any : "default") : "ghost"}
+                  variant={isActive ? getRoleColor() as any : "ghost"}
                   size="sm"
                   onClick={() => onPageChange(page.id)}
                   className="flex items-center space-x-2"
@@ -126,18 +122,14 @@ export function Navigation({ currentPage, onPageChange, onShowAuth }: Navigation
 
         {/* User Menu */}
         <div className="flex items-center space-x-2">
-          {isAuthenticated && user ? (
+          {user ? (
             <div className="flex items-center space-x-3">
-              <Badge variant={getRoleColor(user.role) as any} className="capitalize">
-                {user.role}
-              </Badge>
-              
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+                  <Button variant="ghost" className="relative h-10 w-10 rounded-full p-0" onClick={() => navigate('/profile')}>
                     <Avatar className="h-8 w-8">
                       <AvatarFallback>
-                        {getInitials(user.name)}
+                        {getInitials(user.displayName)}
                       </AvatarFallback>
                     </Avatar>
                   </Button>
@@ -145,7 +137,7 @@ export function Navigation({ currentPage, onPageChange, onShowAuth }: Navigation
                 <DropdownMenuContent className="w-56" align="end" forceMount>
                   <DropdownMenuLabel className="font-normal">
                     <div className="flex flex-col space-y-1">
-                      <p className="text-sm font-medium leading-none">{user.name}</p>
+                      <p className="text-sm font-medium leading-none">{user.displayName || user.email}</p>
                       <p className="text-xs leading-none text-muted-foreground">
                         {user.email}
                       </p>
@@ -159,7 +151,7 @@ export function Navigation({ currentPage, onPageChange, onShowAuth }: Navigation
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={handleLogout}>
                     <LogOut className="mr-2 h-4 w-4" />
-                    <span>Log out</span>
+                    <span>Sign Out</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -176,25 +168,25 @@ export function Navigation({ currentPage, onPageChange, onShowAuth }: Navigation
       {/* Mobile Navigation */}
       <nav className="md:hidden bg-background border-b">
         <div className="flex items-center justify-between p-4">
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 cursor-pointer" onClick={() => navigate('/index')}>
             <Shield className="h-6 w-6 text-emergency" />
             <div>
               <h1 className="text-lg font-bold">EmergencyAid</h1>
-              {isAuthenticated && user && (
-                <Badge variant="outline" className="text-xs">
-                  {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
-                </Badge>
+              {user && (
+                <Badge variant="outline" className="text-xs hidden">User</Badge>
               )}
             </div>
           </div>
           
           <div className="flex items-center space-x-2">
-            {isAuthenticated && user && (
-              <Avatar className="h-8 w-8">
-                <AvatarFallback className="text-xs">
-                  {getInitials(user.name)}
-                </AvatarFallback>
-              </Avatar>
+            {user && (
+              <Button variant="ghost" className="p-0 h-8 w-8 rounded-full" onClick={() => navigate('/profile')}>
+                <Avatar className="h-8 w-8">
+                  <AvatarFallback className="text-xs">
+                    {getInitials(user.displayName)}
+                  </AvatarFallback>
+                </Avatar>
+              </Button>
             )}
             <Button
               variant="ghost"
@@ -214,14 +206,12 @@ export function Navigation({ currentPage, onPageChange, onShowAuth }: Navigation
               {pages.map((page) => {
                 const Icon = page.icon;
                 const isActive = currentPage === page.id;
-                
                 // Skip account page if not authenticated
-                if (page.id === 'account' && !isAuthenticated) return null;
-                
+                if (page.id === 'account' && !user) return null;
                 return (
                   <Button
                     key={page.id}
-                    variant={isActive ? (user?.role ? getRoleColor(user.role) as any : "default") : "ghost"}
+                    variant={isActive ? getRoleColor() as any : "ghost"}
                     size="sm"
                     onClick={() => {
                       onPageChange(page.id);
@@ -238,11 +228,11 @@ export function Navigation({ currentPage, onPageChange, onShowAuth }: Navigation
 
             {/* Authentication Section */}
             <div className="border-t pt-3 space-y-2">
-              {isAuthenticated && user ? (
+              {user ? (
                 <>
                   <div className="text-sm font-semibold text-muted-foreground">Account</div>
                   <div className="text-sm text-muted-foreground">
-                    Signed in as <strong>{user.name}</strong>
+                    Signed in as <strong>{user.displayName || user.email}</strong>
                   </div>
                   <Button
                     variant="outline"

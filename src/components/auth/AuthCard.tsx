@@ -1,11 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { auth } from '../../lib/firebase';
 import { FcGoogle } from 'react-icons/fc';
 import { Eye, EyeOff } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 const AuthCard = () => {
+  const navigate = useNavigate();
   const { user, loading, signInWithGoogle, signOutUser } = useAuth();
   const [isFlipped, setIsFlipped] = useState(false);
 
@@ -32,6 +34,7 @@ const AuthCard = () => {
     setIsSubmitting(true);
     try {
       await signInWithEmailAndPassword(auth, email, password);
+      navigate('/index');
     } catch (err: any) {
       setError(err.message || 'Failed to sign in');
     } finally {
@@ -44,6 +47,7 @@ const AuthCard = () => {
     setError('');
     try {
       await signInWithGoogle();
+      navigate('/index');
     } catch (err: any) {
       setError(err.message || 'Google sign-in failed');
     }
@@ -64,6 +68,7 @@ const AuthCard = () => {
       setTimeout(() => {
         setIsFlipped(false);
         setSignupSuccess('');
+        navigate('/index');
       }, 1200);
     } catch (err: any) {
       setSignupError(err.message || 'Failed to sign up');
@@ -74,14 +79,11 @@ const AuthCard = () => {
 
   if (loading) return <div className="flex justify-center items-center min-h-screen">Loading...</div>;
 
-  if (user) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[300px] p-6 bg-white rounded-lg shadow-md">
-        <p className="mb-4 text-lg">Welcome, {user.displayName || user.email}!</p>
-        <button onClick={signOutUser} className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition">Sign Out</button>
-      </div>
-    );
-  }
+  useEffect(() => {
+    if (user) {
+      navigate('/index');
+    }
+  }, [user, navigate]);
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-white">
