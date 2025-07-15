@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { PhoneCall, Play } from "lucide-react";
-// import heroImage from "@/assets/hero-ambulance.jpg";
+import heroImage from "@/assets/hero-ambulance.png";
 
 export const Hero = () => {
   return (
@@ -15,26 +15,26 @@ export const Hero = () => {
           {/* Hero Content */}
           <div className="space-y-8 animate-fade-in">
             <div className="space-y-4">
-              <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 text-white/90 text-sm border border-white/20">
+              <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 text-black/90 text-sm border border-white/20">
                 <div className="w-2 h-2 bg-success rounded-full animate-pulse-soft"></div>
                 Emergency Response Active
               </div>
               
-              <h1 className="text-5xl lg:text-7xl font-bold text-white leading-tight">
+              <h1 className="text-5xl lg:text-7xl font-bold text-black leading-tight">
                 <span className="block">Voice-Triggered</span>
-                <span className="block bg-gradient-to-r from-white to-white/80 bg-clip-text text-transparent">
+                <span className="block bg-gradient-to-r from-black to-black/80 bg-clip-text text-transparent">
                   Emergency Care
                 </span>
               </h1>
               
-              <p className="text-xl lg:text-2xl text-white/90 leading-relaxed max-w-2xl">
+              <p className="text-xl lg:text-2xl text-black/90 leading-relaxed max-w-2xl">
                 Shout "Ambulance needed!" and get instant emergency response. 
                 Complete healthcare platform with smart dispatch, medication reminders, and AI-powered care assistance.
               </p>
             </div>
 
             {/* Key Benefits */}
-            <div className="flex flex-wrap gap-6 text-white/90">
+            <div className="flex flex-wrap gap-6 text-black/90">
               <div className="flex items-center gap-2">
                 <div className="w-3 h-3 bg-success rounded-full"></div>
                 <span className="font-medium">{"<"}3 sec response time</span>
@@ -62,7 +62,7 @@ export const Hero = () => {
               <Button 
                 size="lg" 
                 variant="outline" 
-                className="border-white/30 text-white hover:bg-white/10 backdrop-blur-sm px-8 py-4 text-lg font-semibold"
+                className="border-white/30 text-black hover:bg-white/10 backdrop-blur-sm px-8 py-4 text-lg font-semibold"
               >
                 <Play className="mr-2 h-5 w-5" />
                 Watch How It Works
@@ -71,11 +71,11 @@ export const Hero = () => {
 
             {/* Trust Indicators */}
             <div className="pt-8 border-t border-white/20">
-              <p className="text-white/70 text-sm mb-4">Trusted by healthcare providers:</p>
+              <p className="text-black/70 text-sm mb-4">Trusted by healthcare providers:</p>
               <div className="flex items-center gap-8 opacity-60">
-                <div className="text-white font-semibold">108 EMS</div>
-                <div className="text-white font-semibold">HealthTech India</div>
-                <div className="text-white font-semibold">MedAssist</div>
+                <div className="text-black font-semibold">108 EMS</div>
+                <div className="text-black font-semibold">HealthTech India</div>
+                <div className="text-black font-semibold">MedAssist</div>
               </div>
             </div>
           </div>
@@ -84,7 +84,7 @@ export const Hero = () => {
           <div className="relative lg:order-last animate-slide-up">
             <div className="relative rounded-2xl overflow-hidden shadow-healthcare">
               <img 
-                // src={heroImage} 
+                src={heroImage} 
                 alt="Emergency response dashboard showing ambulance dispatch" 
                 className="w-full h-auto object-cover"
               />
