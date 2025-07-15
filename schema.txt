@@ -1,0 +1,79 @@
+type User @table {
+  displayName: String!
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+  email: String
+  photoUrl: String
+  bloodGroup: String
+  allergies: String # Stored as JSON string
+  medicalHistory: String # Stored as JSON string
+  medications: String # Stored as JSON string
+  emergencyContacts: String # Stored as JSON string
+  isVerifiedDonor: Boolean
+  privacySettings: String # Stored as JSON string
+}
+
+type Hospital @table {
+  name: String!
+  address: String!
+  latitude: Float!
+  longitude: Float!
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+  contactPhone: String
+  email: String
+}
+
+type EmergencyAlert @table {
+  user: User!
+  alertTimestamp: Timestamp!
+  status: String!
+  latitude: Float!
+  longitude: Float!
+  alertType: String!
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+  hospital: Hospital
+  medicalProfileSnapshot: String # Stored as JSON string
+  notes: String
+  alertHistory: String # Stored as JSON array string
+}
+
+type BloodRequest @table {
+  hospital: Hospital!
+  bloodGroupNeeded: String!
+  quantityNeeded: Int!
+  locationName: String!
+  latitude: Float!
+  longitude: Float!
+  urgencyLevel: String!
+  status: String!
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+  description: String
+}
+
+type Donation @table {
+  bloodRequest: BloodRequest!
+  donor: User!
+  status: String!
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+  pledgedQuantity: Int
+  donationDate: Date
+  notes: String
+}
+
+type GuardianGroup @table {
+  name: String!
+  owner: User! # The user who owns/created the group
+  createdAt: Timestamp!
+  updatedAt: Timestamp!
+  description: String
+}
+
+type GuardianGroupMember @table(key: ["group", "member"]) {
+  group: GuardianGroup!
+  member: User!
+  joinedAt: Timestamp!
+}

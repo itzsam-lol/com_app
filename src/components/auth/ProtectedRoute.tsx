@@ -1,8 +1,7 @@
 import { ReactNode } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { AuthForms } from '@/components/auth/AuthForms';
+import AuthForms from '@/components/auth/AuthForms';
 import { Loader2, Shield } from 'lucide-react';
-
 interface ProtectedRouteProps {
   children: ReactNode;
   requiredRole?: 'citizen' | 'hospital' | 'admin';
@@ -14,10 +13,11 @@ export function ProtectedRoute({
   requiredRole, 
   fallback 
 }: ProtectedRouteProps) {
-  const { user, isLoading, isAuthenticated } = useAuth();
+  const { user, loading } = useAuth();
+  const isAuthenticated = !!user;
 
   // Show loading spinner while checking authentication
-  if (isLoading) {
+  if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center space-y-4">
@@ -38,7 +38,7 @@ export function ProtectedRoute({
   }
 
   // Check role-based access
-  if (requiredRole && user.role !== requiredRole) {
+  if (requiredRole && (user as any).role !== requiredRole) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background p-4">
         <div className="text-center space-y-4 max-w-md">
@@ -58,7 +58,7 @@ export function ProtectedRoute({
             )}
           </p>
           <p className="text-sm">
-            Current role: <strong className="capitalize">{user.role}</strong>
+            Current role: <strong className="capitalize">{(user as any).role ?? 'unknown'}</strong>
           </p>
         </div>
       </div>

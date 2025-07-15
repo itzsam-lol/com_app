@@ -5,8 +5,8 @@ import { MedicalProfile } from "@/components/MedicalProfile";
 import { HospitalDashboard } from "@/components/HospitalDashboard";
 import { CommunityAid } from "@/components/CommunityAid";
 import { EmergencyHistory } from "@/components/EmergencyHistory";
-import { AuthForms } from "@/components/auth/AuthForms";
-import { UserProfile } from "@/components/auth/UserProfile";
+import AuthForms from "@/components/auth/AuthForms";
+import UserProfile from "@/components/auth/UserProfile";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -18,7 +18,8 @@ const Index = () => {
   const [currentPage, setCurrentPage] = useState('emergency');
   const [emergencyData, setEmergencyData] = useState<any>(null);
   const [showAuth, setShowAuth] = useState(false);
-  const { user, isAuthenticated } = useAuth();
+  const { user } = useAuth();
+  const isAuthenticated = !!user;
 
   const handleEmergencyTriggered = (data: { location: string; timestamp: Date; type: string }) => {
     setEmergencyData(data);
@@ -37,14 +38,14 @@ const Index = () => {
     if (showAuth) {
       return (
         <div className="max-w-md mx-auto">
-          <AuthForms onClose={handleCloseAuth} />
+          <AuthForms />
         </div>
       );
     }
 
     // Handle authenticated routes
     if (isAuthenticated && user) {
-      if (user.role === 'hospital') {
+      if ((user as any).role === 'hospital') {
         switch (currentPage) {
           case 'dashboard':
             return <HospitalDashboard />;
