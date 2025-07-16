@@ -9,6 +9,8 @@ import Landing from "./pages/landingpage";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import Signup from "./pages/Signup";
+import Subscribe from "./pages/Subscribe";
+import Loyalty from "./pages/Loyalty";
 
 const queryClient = new QueryClient();
 
@@ -24,6 +26,8 @@ const App = () => (
             <Route path="/" element={<Landing />} />
             <Route path="/index" element={<Index />} />
             <Route path="/signup" element={<Signup />} />
+            <Route path="/subscribe" element={<Subscribe />} />
+            <Route path="/loyalty" element={<Loyalty />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

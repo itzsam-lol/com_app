@@ -2,12 +2,14 @@ import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Phone, Mic, MicOff, MapPin, Clock } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface EmergencyButtonProps {
   onEmergencyTriggered: (data: { location: string; timestamp: Date; type: string }) => void;
 }
 
 export function EmergencyButton({ onEmergencyTriggered }: EmergencyButtonProps) {
+  const { user } = useAuth();
   const [isListening, setIsListening] = useState(false);
   const [isCountdownActive, setIsCountdownActive] = useState(false);
   const [countdown, setCountdown] = useState(10);
@@ -27,11 +29,31 @@ export function EmergencyButton({ onEmergencyTriggered }: EmergencyButtonProps) 
     return locations[Math.floor(Math.random() * locations.length)];
   };
 
-  const triggerEmergency = (type: string) => {
+  const triggerEmergency = async (type: string) => {
     const location = simulateLocation();
     const timestamp = new Date();
     setIsEmergencyActive(true);
     onEmergencyTriggered({ location, timestamp, type });
+    // Backend integration
+    if (user) {
+      try {
+        const idToken = await user.getIdToken();
+        await fetch("http://localhost:4000/sos/me", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${idToken}`,
+          },
+          body: JSON.stringify({ type, location }),
+        });
+      } catch (err) {
+        toast({
+          title: "Backend Error",
+          description: "Failed to notify backend.",
+          variant: "destructive",
+        });
+      }
+    }
     toast({
       title: "🚨 Emergency Alert Sent",
       description: `${type} alert dispatched. Help is on the way!`,
